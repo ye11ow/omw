@@ -5,7 +5,7 @@ import json
 import os
 import teslapy
 
-from flask import Flask
+from flask import Flask, send_from_directory
 
 class CacheManager:
 
@@ -72,3 +72,6 @@ def tesla():
     return cm.get()
 
 
+@app.route('/<path:path>')
+def send_js(path):
+    return send_from_directory('', path)
