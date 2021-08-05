@@ -3,11 +3,6 @@ import Control from './Control';
 import './App.css';
 import React from 'react';
 
-const API_BASE = 'https://api.mapbox.com/';
-const API_ADDRESS = `${API_BASE}geocoding/v5/mapbox.places/`;
-const API_DIRECTION = `${API_BASE}directions/v5/mapbox/driving/`;
-
-
 class App extends React.Component {
 
   state = {
@@ -139,12 +134,11 @@ class App extends React.Component {
 
   _buildDirectionURI(me, target) {
     const coordinates = `${me.lng},${me.lat};${target.center[0]},${target.center[1]}`;
-    return `${API_DIRECTION}${encodeURI(coordinates)}?geometries=geojson&steps=true&access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p0MG01MXRqMW45cjQzb2R6b2ptc3J4MSJ9.zA2W0IkI0c6KaAhJfk9bWg`
-
+    return `route?coordinates=${encodeURI(coordinates)}`
   }
 
   _buildAddrURI(addr) {
-    return `${API_ADDRESS}${encodeURI(addr)}.json?access_token=pk.eyJ1Ijoic2VhcmNoLW1hY2hpbmUtdXNlci0xIiwiYSI6ImNrN2Y1Nmp4YjB3aG4zZ253YnJoY21kbzkifQ.JM5ZeqwEEm-Tonrk5wOOMw&autocomplete=true&country=ca`
+    return `address?address=${encodeURI(addr)}`
   }
 
 }

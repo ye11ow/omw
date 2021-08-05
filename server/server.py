@@ -4,8 +4,16 @@ import random
 import json
 import os
 import teslapy
+import urllib.parse
+import requests
 
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
+
+API_BASE = 'https://api.mapbox.com/'
+API_ADDRESS = f'{API_BASE}geocoding/v5/mapbox.places/'
+API_DIRECTION = f'{API_BASE}directions/v5/mapbox/driving/'
+
+MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
 
 class CacheManager:
 
@@ -66,12 +74,45 @@ def create_app():
 app = create_app()
 cm = CacheManager()
 
+@app.route('/<path:path>')
+def send_js(path):
+    return send_from_directory('', path)
 
 @app.route("/tesla")
 def tesla():
     return cm.get()
 
+@app.route('/address')
+def address():
+    addr = request.args.get('address', '')
 
-@app.route('/<path:path>')
-def send_js(path):
-    return send_from_directory('', path)
+    print('querying', addr)
+
+    params = {
+        'access_token': MAPBOX_TOKEN,
+        'autocomplete': 'true',
+        'country': 'ca'
+    }
+
+    r = requests.get(f'{API_ADDRESS}{urllib.parse.quote(addr)}.json', params = params)
+
+    return r.json()
+
+@app.route('/route')
+def route():
+    coordinates = request.args.get('coordinates', '')
+
+    print('querying route for ', coordinates)
+
+    params = {
+        'access_token': MAPBOX_TOKEN,
+        'geometries': 'geojson',
+        'steps': 'true'
+    }
+
+    r = requests.get(f'{API_DIRECTION}{urllib.parse.quote(coordinates)}', params = params)
+
+    return r.json()
+
+
+

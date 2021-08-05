@@ -1,0 +1,212 @@
+{
+  "attribution": "NOTICE: \u00a9 2021 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service (https://www.mapbox.com/about/maps/). This response and the information it contains may not be retained. POI(s) provided by Foursquare.",
+  "features": [
+    {
+      "center": [-123.114806, 49.280232],
+      "context": [
+        {
+          "id": "neighborhood.13620400253322200",
+          "text": "Downtown",
+          "wikidata": "Q1076204"
+        },
+        { "id": "postcode.5960594173189690", "text": "V6B 6B1" },
+        {
+          "id": "place.3323635178130490",
+          "text": "Vancouver",
+          "wikidata": "Q24639"
+        },
+        {
+          "id": "region.9984400673322020",
+          "short_code": "CA-BC",
+          "text": "British Columbia",
+          "wikidata": "Q1974"
+        },
+        {
+          "id": "country.10278600750587150",
+          "short_code": "ca",
+          "text": "Canada",
+          "wikidata": "Q16"
+        }
+      ],
+      "geometry": { "coordinates": [-123.114806, 49.280232], "type": "Point" },
+      "id": "poi.309237751921",
+      "place_name": "Library Square Public House, 300 W Georgia St., Vancouver, British Columbia V6B 6B1, Canada",
+      "place_type": ["poi"],
+      "properties": {
+        "address": "300 W Georgia St.",
+        "category": "bar, pub, alcohol, liquor, beer",
+        "foursquare": "4aa7f801f964a520514e20e3",
+        "landmark": true
+      },
+      "relevance": 0.656667,
+      "text": "Library Square Public House",
+      "type": "Feature"
+    },
+    {
+      "center": [-123.114792, 49.280226],
+      "context": [
+        {
+          "id": "neighborhood.13620400253322200",
+          "text": "Downtown",
+          "wikidata": "Q1076204"
+        },
+        { "id": "postcode.5960594173189690", "text": "V6B 6B1" },
+        {
+          "id": "place.3323635178130490",
+          "text": "Vancouver",
+          "wikidata": "Q24639"
+        },
+        {
+          "id": "region.9984400673322020",
+          "short_code": "CA-BC",
+          "text": "British Columbia",
+          "wikidata": "Q1974"
+        },
+        {
+          "id": "country.10278600750587150",
+          "short_code": "ca",
+          "text": "Canada",
+          "wikidata": "Q16"
+        }
+      ],
+      "geometry": { "coordinates": [-123.114792, 49.280226], "type": "Point" },
+      "id": "poi.841813614298",
+      "place_name": "Library Square Tower, 300 W. Georgia, Vancouver, British Columbia V6B 6B1, Canada",
+      "place_type": ["poi"],
+      "properties": {
+        "address": "300 W. Georgia",
+        "category": "government agency, office",
+        "foursquare": "4cd04fa39d87224b0271543b",
+        "landmark": true
+      },
+      "relevance": 0.656667,
+      "text": "Library Square Tower",
+      "type": "Feature"
+    },
+    {
+      "center": [-123.115692, 49.279559],
+      "context": [
+        {
+          "id": "neighborhood.13620400253322200",
+          "text": "Downtown",
+          "wikidata": "Q1076204"
+        },
+        { "id": "postcode.5960594173189690", "text": "V6B 6B1" },
+        {
+          "id": "place.3323635178130490",
+          "text": "Vancouver",
+          "wikidata": "Q24639"
+        },
+        {
+          "id": "region.9984400673322020",
+          "short_code": "CA-BC",
+          "text": "British Columbia",
+          "wikidata": "Q1974"
+        },
+        {
+          "id": "country.10278600750587150",
+          "short_code": "ca",
+          "text": "Canada",
+          "wikidata": "Q16"
+        }
+      ],
+      "geometry": { "coordinates": [-123.115692, 49.279559], "type": "Point" },
+      "id": "poi.51539709505",
+      "place_name": "Vancouver Public Library, 350 West Georgia St, Vancouver, British Columbia V6B 6B1, Canada",
+      "place_type": ["poi"],
+      "properties": {
+        "address": "350 West Georgia St",
+        "category": "libraries, library",
+        "foursquare": "4aa73e90f964a520754c20e3",
+        "landmark": true,
+        "maki": "library",
+        "wikidata": "Q1376408"
+      },
+      "relevance": 0.656667,
+      "text": "Vancouver Public Library",
+      "type": "Feature"
+    },
+    {
+      "center": [-123.100506, 49.264134],
+      "context": [
+        { "id": "neighborhood.9110829154329470", "text": "Mount Pleasant" },
+        { "id": "postcode.10439582693883290", "text": "V5T 3H7" },
+        {
+          "id": "place.3323635178130490",
+          "text": "Vancouver",
+          "wikidata": "Q24639"
+        },
+        {
+          "id": "region.9984400673322020",
+          "short_code": "CA-BC",
+          "text": "British Columbia",
+          "wikidata": "Q1974"
+        },
+        {
+          "id": "country.10278600750587150",
+          "short_code": "ca",
+          "text": "Canada",
+          "wikidata": "Q16"
+        }
+      ],
+      "geometry": { "coordinates": [-123.100506, 49.264134], "type": "Point" },
+      "id": "poi.979252563454",
+      "place_name": "Mount Pleasant Branch - Vancouver Public Library, 1 Kingsway, Vancouver, British Columbia V5T 3H7, Canada",
+      "place_type": ["poi"],
+      "properties": {
+        "address": "1 Kingsway",
+        "category": "libraries, library",
+        "foursquare": "4b2d303ff964a52087d024e3",
+        "landmark": true,
+        "maki": "library"
+      },
+      "relevance": 0.656667,
+      "text": "Mount Pleasant Branch - Vancouver Public Library",
+      "type": "Feature"
+    },
+    {
+      "center": [-123.115405, 49.279518],
+      "context": [
+        {
+          "id": "neighborhood.13620400253322200",
+          "text": "Downtown",
+          "wikidata": "Q1076204"
+        },
+        { "id": "postcode.5960594173189690", "text": "V6B 6B1" },
+        {
+          "id": "place.3323635178130490",
+          "text": "Vancouver",
+          "wikidata": "Q24639"
+        },
+        {
+          "id": "region.9984400673322020",
+          "short_code": "CA-BC",
+          "text": "British Columbia",
+          "wikidata": "Q1974"
+        },
+        {
+          "id": "country.10278600750587150",
+          "short_code": "ca",
+          "text": "Canada",
+          "wikidata": "Q16"
+        }
+      ],
+      "geometry": { "coordinates": [-123.115405, 49.279518], "type": "Point" },
+      "id": "poi.438086684416",
+      "place_name": "Library Square, Georgia St, Vancouver, British Columbia V6B 6B1, Canada",
+      "place_type": ["poi"],
+      "properties": {
+        "address": "Georgia St",
+        "category": "park",
+        "foursquare": "4c7596abb474a1cda1b9b9bf",
+        "landmark": true,
+        "maki": "picnic-site"
+      },
+      "relevance": 0.656667,
+      "text": "Library Square",
+      "type": "Feature"
+    }
+  ],
+  "query": ["vancouver", "center", "library"],
+  "type": "FeatureCollection"
+}
