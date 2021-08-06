@@ -67,7 +67,7 @@ class CacheManager:
         self._last_refreshed = int(time.time())
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder = '../build')
 
     return app
 
@@ -76,7 +76,7 @@ cm = CacheManager()
 
 @app.route('/<path:path>')
 def send_js(path):
-    return send_from_directory('', path)
+    return send_from_directory('../build', path)
 
 @app.route("/tesla")
 def tesla():

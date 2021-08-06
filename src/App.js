@@ -23,6 +23,11 @@ class App extends React.Component {
       this.handleSubmitAddress(addr);
     }
 
+    const noti = urlParams.get("notification");
+    if (noti && parseInt(noti, 10) > 0) {
+      this.state.notification = parseInt(noti, 10);
+    }
+
     setInterval(this.updateVehicle.bind(this), 5000)
   }
 
@@ -53,10 +58,6 @@ class App extends React.Component {
       .catch((error) => {
         console.error('Error:', error);
       });
-  }
-
-  handleAddrChange(event) {
-    this.setState({ address: event.target.value });
   }
 
   updateVehicle() {
