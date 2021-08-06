@@ -3,20 +3,16 @@ import React from "react";
 class Control extends React.Component {
 
   state = {
-    address: '',
-    time: 5,
     nextUpdate: null
   }
 
-  componentDidMount() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let addr = urlParams.get("address");
-    this._address = '';
-    if (addr && addr.length > 0) {
-      this.state.address = addr;
-      this.props.handleSubmitAddress(addr);
-    }
+  constructor(props) {
+    super(props);
 
+    this.timeInput = React.createRef();
+  }
+
+  componentDidMount() {
     setInterval(() => {
       if (this.props.nextUpdate) {
         this.setState({
@@ -24,61 +20,36 @@ class Control extends React.Component {
         });
       }
     });
-  }
 
-  handleAddrChange(event) {
-    this.setState({address: event.target.value});
-  }
-
-  handleNotificationChange(event) {
-    this.setState({time: event.target.value});
-  }
-
-
-  handleSubmitAddress(event) {
-    this.props.handleSubmitAddress(this.state.address);
-    if (event) {
-      event.preventDefault();
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission();
     }
+  }
+
+  handleSubmitNotification(event) {
+    this.props.handleSubmitNotification(this.timeInput.current.value);
+    event.preventDefault();
   }
 
   render() {
     return (
       <div className="row">
         {this.props.target === null &&
-          <form onSubmit={this.handleSubmitAddress.bind(this)}>
-            <div className="col-sm-6">
-              <input
-                className="form-control"
-                type="text"
-                name="address"
-                placeholder="Your address"
-                value={this.state.address}
-                onChange={this.handleAddrChange.bind(this)}
-              />
-            </div>
-            <div className="col-sm-6">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </div>
-          </form>
+          <div className="col-sm-12">
+            No valid address
+          </div>
         }
         {this.props.target &&
-          <form onSubmit={this.props.handleSubmitNotification}>
+          <form onSubmit={this.handleSubmitNotification.bind(this)}>
             <div className="col">
-              Your place: {this.state.address}
+              Your location: {this.props.target.place_name}
               {this.props.route && (
                 <div className="label">
                   <span>ye11ow</span> is{" "}
                   <span className="time">
                     {Math.round(this.props.route.duration / 60)}
                   </span>{" "}
-                  minutes or{" "}
-                  <span className="distance">
-                    {Math.round(this.props.route.distance / 1000)}
-                  </span>{" "}
-                  KM away (next update in <span>{Math.round(this.props.nextUpdate - Date.now() / 1000)}</span>s)
+                  minutes ({Math.round(this.props.route.distance / 1000)} KM) away (next update in <span>{Math.round(this.props.nextUpdate - Date.now() / 1000)}</span>s)
                 </div>
               )}
             </div>
@@ -90,8 +61,8 @@ class Control extends React.Component {
                   className="form-control"
                   type="number"
                   name="time"
-                  value={this.state.time}
-                  onChange={this.handleNotificationChange.bind(this)}
+                  defaultValue={this.props.time}
+                  ref={this.timeInput}
                 />
                  minutes away
                 <button type="submit" className="btn btn-primary">

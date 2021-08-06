@@ -12,12 +12,20 @@ class App extends React.Component {
     time: 5,
     notify: false,
     lastUpdate: null,
-    nextUpdate: null,
-    ongoingRequest: false
+    nextUpdate: null
   }
 
   componentDidMount() {
-    setInterval(this.updateVehicle.bind(this), 1000)
+    const urlParams = new URLSearchParams(window.location.search);
+    let addr = urlParams.get("address");
+    this._address = '';
+    if (addr && addr.length > 0) {
+      this._address = addr;
+      this.handleSubmitAddress(addr);
+    }
+
+
+    setInterval(this.updateVehicle.bind(this), 5000)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -53,18 +61,15 @@ class App extends React.Component {
     this.setState({ address: event.target.value });
   }
 
-  handleSubmitNotification(event) {
+  handleSubmitNotification(time) {
     this.setState({
+      time: time,
       notify: true
     });
-
-    if (event) {
-      event.preventDefault();
-    }
   }
 
   updateVehicle() {
-    if (this.state.ongoingRequest) {
+    if (this._updatingVehicle) {
       return;
     }
 
@@ -72,11 +77,7 @@ class App extends React.Component {
        return;
     }
 
-    this.setState({
-      ongoingRequest: true
-    })
-
-    fetch('/tesla')
+    this._updatingVehicle = fetch('/tesla')
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -84,28 +85,37 @@ class App extends React.Component {
             lng: data.vehicle.longitude,
             lat: data.vehicle.latitude
           },
-          nextUpdate: data.next_refresh,
-          ongoingRequest: false
+          nextUpdate: data.next_refresh
         })
         console.log('scheduled next run to be', Math.round(data.next_refresh - Date.now() / 1000), 's later', data);
       }).catch((error) => {
         console.error('Error:', error);
-      });
+      }).finally(() => this._updatingVehicle = null);
   }
 
   refreshRoute() {
+    if (this._refreshingRoute) {
+      return;
+    }
+
     if (!this.state.me || !this.state.target) {
       return;
     }
-    fetch(this._buildDirectionURI(this.state.me, this.state.target))
+
+    this._refreshingRoute = fetch(this._buildDirectionURI(this.state.me, this.state.target))
       .then(response => response.json())
       .then(data => {
         let route = null;
         if (data.routes.length > 0) {
           route = data.routes[0];
-          console.log("found route", route);
+          console.log('found route', route);
+          if (route && this.state.time) {
+            if (route.duration <= this.state.time * 60) {
+              new Notification(`Hey! ye11ow is ${Math.round(route.duration / 60)} minutes away!`);
+            }
+          }
         } else {
-          console.log("no route found");
+          console.log('no route found');
         }
 
         this.setState({
@@ -115,13 +125,14 @@ class App extends React.Component {
       })
       .catch((error) => {
         console.error('Error:', error);
-      });
+      })
+      .finally(() => this._refreshingRoute = null);
   }
 
   render() {
     return (
       <div className="container-fluid">
-        <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} time={this.state.time} handleSubmitAddress={this.handleSubmitAddress.bind(this)} handleSubmitNotification={this.handleSubmitNotification.bind(this)} />
+        <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} time={this.state.time} handleSubmitNotification={this.handleSubmitNotification.bind(this)} />
         <div className="row">
           <div className="col">
             <Map me={this.state.me} target={this.state.target} />

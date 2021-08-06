@@ -1,6 +1,4 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# On My Way
 
 ## Available Scripts
 
@@ -29,15 +27,24 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+### `yarn start_server`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Start the backend server. Some available environment variables:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+``` bash
+# Token for mapbox
+MAPBOX_TOKEN=
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# Enable debug mode. You will need to either set this variable to any value or set both TESLA_EMAIL and TESLA_PASSWORD.
+# Once debug mode is enabled, the server will return mock value for Tesla API.
+TESLA_DEBUG=
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+# The email address of your Tesla account
+TESLA_EMAIL=
+
+# The password of your Tesla account
+TESLA_PASSWORD=
+```
 
 ## Learn More
 
