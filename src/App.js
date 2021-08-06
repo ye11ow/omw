@@ -101,7 +101,7 @@ class App extends React.Component {
         if (data.routes.length > 0) {
           route = data.routes[0];
           console.log('found route', route);
-          if (route && this.state.notification) {
+          if (route && this.state.notification && "Notification" in window) {
             if (route.duration <= this.state.notification * 60) {
               new Notification(`Hey! ye11ow is ${Math.round(route.duration / 60)} minutes away!`);
             }

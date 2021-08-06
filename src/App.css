@@ -3,12 +3,9 @@
 }
 
 
-.label > .time {
-  font-weight: 700;
-}
-
-.label > .distance {
-  font-weight: 700;
+.info-card {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .marker {
