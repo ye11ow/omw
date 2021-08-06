@@ -9,8 +9,7 @@ class App extends React.Component {
     target: null,
     route: null,
     me: null,
-    time: 5,
-    notify: false,
+    notification: 5,
     lastUpdate: null,
     nextUpdate: null
   }
@@ -23,7 +22,6 @@ class App extends React.Component {
       this._address = addr;
       this.handleSubmitAddress(addr);
     }
-
 
     setInterval(this.updateVehicle.bind(this), 5000)
   }
@@ -59,13 +57,6 @@ class App extends React.Component {
 
   handleAddrChange(event) {
     this.setState({ address: event.target.value });
-  }
-
-  handleSubmitNotification(time) {
-    this.setState({
-      time: time,
-      notify: true
-    });
   }
 
   updateVehicle() {
@@ -109,8 +100,8 @@ class App extends React.Component {
         if (data.routes.length > 0) {
           route = data.routes[0];
           console.log('found route', route);
-          if (route && this.state.time) {
-            if (route.duration <= this.state.time * 60) {
+          if (route && this.state.notification) {
+            if (route.duration <= this.state.notification * 60) {
               new Notification(`Hey! ye11ow is ${Math.round(route.duration / 60)} minutes away!`);
             }
           }
@@ -132,7 +123,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="container-fluid">
-        <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} time={this.state.time} handleSubmitNotification={this.handleSubmitNotification.bind(this)} />
+        <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} notification={this.state.notification} />
         <div className="row">
           <div className="col">
             <Map me={this.state.me} target={this.state.target} />

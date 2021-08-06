@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import mapboxgl from "!mapbox-gl";
 
 mapboxgl.accessToken =
   "<<TOKEN>>";
@@ -22,7 +23,7 @@ export default function Map(props) {
 
     el.style.backgroundImage = 'url(resources/car.png)';
     el.className = "marker";
-    el.style.transform = `rotate(80deg);`
+    // el.style.transform = `rotate(80deg);`
 
     marker.current = new mapboxgl.Marker(el)
       .setLngLat([-123.1207, 49.2827])
@@ -30,18 +31,28 @@ export default function Map(props) {
 
   });
 
-  if (map.current && props.me) {
-    // make a marker for each feature and add it to the map
-    marker.current.setLngLat([props.me.lng, props.me.lat])
+  if (map.current) {
+    if (props.me) {
+      // make a marker for each feature and add it to the map
+      marker.current.setLngLat([props.me.lng, props.me.lat])
 
-    map.current.setCenter([props.me.lng, props.me.lat])
-    map.current.setZoom(15)
-  }
+      map.current.setCenter([props.me.lng, props.me.lat])
+      map.current.setZoom(12)
+    }
 
-  if (map.current && props.target) {
-    new mapboxgl.Marker()
-    .setLngLat(props.target.center)
-    .addTo(map.current);
+    if (props.target) {
+      new mapboxgl.Marker()
+      .setLngLat(props.target.center)
+      .addTo(map.current);
+    }
+
+    if (props.me && props.target) {
+      const midLng = (props.me.lng + props.target.center[0]) / 2
+      const midLat = (props.me.lat + props.target.center[1]) / 2
+
+      map.current.setCenter([midLng, midLat])
+    }
+
   }
 
   let text = null;

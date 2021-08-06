@@ -26,58 +26,38 @@ class Control extends React.Component {
     }
   }
 
-  handleSubmitNotification(event) {
-    this.props.handleSubmitNotification(this.timeInput.current.value);
-    event.preventDefault();
-  }
-
   render() {
+    if (!this.props.target) {
+      return (
+        <div className="col-sm-12">
+          No valid address
+        </div>
+      );
+    }
     return (
       <div className="row">
-        {this.props.target === null &&
-          <div className="col-sm-12">
-            No valid address
-          </div>
-        }
-        {this.props.target &&
-          <form onSubmit={this.handleSubmitNotification.bind(this)}>
-            <div className="col">
-              Your location: {this.props.target.place_name}
-              {this.props.route && (
-                <div className="label">
-                  <span>ye11ow</span> is{" "}
-                  <span className="time">
-                    {Math.round(this.props.route.duration / 60)}
-                  </span>{" "}
-                  minutes ({Math.round(this.props.route.distance / 1000)} KM) away (next update in <span>{Math.round(this.props.nextUpdate - Date.now() / 1000)}</span>s)
-                </div>
-              )}
+        <div className="col-sm-12">
+          Your location: {this.props.target.place_name}
+          {this.props.route && (
+            <div className="label">
+              <span>ye11ow</span> is{" "}
+              <mark className="fw-bold">
+                {Math.round(this.props.route.duration / 60)}
+              </mark>{" "}
+              minutes ({Math.round(this.props.route.distance / 1000)} KM) away (<span className="text-muted">next update in {Math.round(this.props.nextUpdate - Date.now() / 1000)}</span>s)
             </div>
-            <div className="col">
-              {!this.props.notify &&
-              <div>
-                Notify me when ye11ow is
-                <input
-                  className="form-control"
-                  type="number"
-                  name="time"
-                  defaultValue={this.props.time}
-                  ref={this.timeInput}
-                />
-                 minutes away
-                <button type="submit" className="btn btn-primary">
-                  Submit
-                </button>
-              </div>
-              }
-              {this.props.notify && (
-                <div className="label">
-                  You will be notified when ye11ow is <span className="time">{this.props.time}</span> minutes away
-                </div>
-              )}
+          )}
+          {this.props.notification && (
+            <div className="label">
+              You will be notified when ye11ow is <mark className="fw-bold">{this.props.notification}</mark> minutes away
             </div>
-          </form>
-        }
+          )}
+          {"Notification" in window && Notification.permission !== "granted" &&
+            <div className="text-danger">
+              Notification permission is not granted ({Notification.permission}).
+            </div>
+          }
+        </div>
       </div>
     );
   }
