@@ -53,6 +53,36 @@ export default function Map(props) {
       map.current.setCenter([midLng, midLat])
     }
 
+    if (props.route) {
+      const geojson = {
+        type: 'Feature',
+        properties: {},
+        geometry: props.route.geometry
+      }
+
+      if (map.current.getSource('route')) {
+        map.current.getSource('route').setData(geojson);
+      } else {
+        map.current.addLayer({
+          id: 'route',
+          type: 'line',
+          source: {
+            type: 'geojson',
+            data: geojson
+          },
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#3887be',
+            'line-width': 5,
+            'line-opacity': 0.75
+          }
+        });
+      }
+    }
+
   }
 
   let text = null;

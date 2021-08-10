@@ -107,7 +107,7 @@ def route():
     params = {
         'access_token': MAPBOX_TOKEN,
         'geometries': 'geojson',
-        'steps': 'true'
+        'steps': 'false'
     }
 
     r = requests.get(f'{API_DIRECTION}{urllib.parse.quote(coordinates)}', params = params)

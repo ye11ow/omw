@@ -127,7 +127,7 @@ class App extends React.Component {
         <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} notification={this.state.notification} />
         <div className="row">
           <div className="col">
-            <Map me={this.state.me} target={this.state.target} />
+            <Map me={this.state.me} target={this.state.target} route={this.state.route} />
           </div>
         </div>
 
