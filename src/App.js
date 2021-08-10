@@ -8,7 +8,7 @@ class App extends React.Component {
   state = {
     target: null,
     route: null,
-    me: null,
+    driver: null,
     notification: 5,
     lastUpdate: null,
     nextUpdate: null
@@ -32,7 +32,7 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.address !== this.state.address || prevState.me !== this.state.me)  {
+    if (prevState.address !== this.state.address || prevState.driver !== this.state.driver)  {
       this.refreshRoute();
     }
     return true;
@@ -73,9 +73,10 @@ class App extends React.Component {
       .then(response => response.json())
       .then(data => {
         this.setState({
-          me: {
+          driver: {
             lng: data.vehicle.longitude,
-            lat: data.vehicle.latitude
+            lat: data.vehicle.latitude,
+            heading: data.vehicle.heading
           },
           nextUpdate: data.next_refresh
         })
@@ -90,11 +91,11 @@ class App extends React.Component {
       return;
     }
 
-    if (!this.state.me || !this.state.target) {
+    if (!this.state.driver || !this.state.target) {
       return;
     }
 
-    this._refreshingRoute = fetch(this._buildDirectionURI(this.state.me, this.state.target))
+    this._refreshingRoute = fetch(this._buildDirectionURI(this.state.driver, this.state.target))
       .then(response => response.json())
       .then(data => {
         let route = null;
@@ -127,7 +128,7 @@ class App extends React.Component {
         <Control target={this.state.target} route={this.state.route} notify={this.state.notify} lastUpdate={this.state.lastUpdate} nextUpdate={this.state.nextUpdate} notification={this.state.notification} />
         <div className="row">
           <div className="col">
-            <Map me={this.state.me} target={this.state.target} route={this.state.route} />
+            <Map driver={this.state.driver} target={this.state.target} route={this.state.route} />
           </div>
         </div>
 
@@ -135,8 +136,8 @@ class App extends React.Component {
     );
   }
 
-  _buildDirectionURI(me, target) {
-    const coordinates = `${me.lng},${me.lat};${target.center[0]},${target.center[1]}`;
+  _buildDirectionURI(driver, target) {
+    const coordinates = `${driver.lng},${driver.lat};${target.center[0]},${target.center[1]}`;
     return `route?coordinates=${encodeURI(coordinates)}`
   }
 

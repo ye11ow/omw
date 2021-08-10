@@ -32,12 +32,14 @@ export default function Map(props) {
   });
 
   if (map.current) {
-    if (props.me) {
+    if (props.driver) {
       // make a marker for each feature and add it to the map
-      marker.current.setLngLat([props.me.lng, props.me.lat])
+      marker.current
+        .setLngLat([props.driver.lng, props.driver.lat])
+        .setRotation(props.driver.heading - 180);
 
-      map.current.setCenter([props.me.lng, props.me.lat])
-      map.current.setZoom(12)
+      map.current.setCenter([props.driver.lng, props.driver.lat]);
+      map.current.setZoom(12);
     }
 
     if (props.target) {
@@ -46,9 +48,9 @@ export default function Map(props) {
       .addTo(map.current);
     }
 
-    if (props.me && props.target) {
-      const midLng = (props.me.lng + props.target.center[0]) / 2
-      const midLat = (props.me.lat + props.target.center[1]) / 2
+    if (props.driver && props.target) {
+      const midLng = (props.driver.lng + props.target.center[0]) / 2
+      const midLat = (props.driver.lat + props.target.center[1]) / 2
 
       map.current.setCenter([midLng, midLat])
     }
