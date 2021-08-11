@@ -66,6 +66,14 @@ class CacheManager:
 
         self._last_refreshed = int(time.time())
 
+    @property
+    def interval(self):
+        return self._interval
+
+    @interval.setter
+    def interval(self, val):
+        self._interval = val
+
 def create_app():
     app = Flask(__name__, static_folder = '../build')
 
@@ -114,5 +122,20 @@ def route():
 
     return r.json()
 
+@app.route('/debug/pause')
+def pause():
+    before = cm.interval
+    cm.interval = 60*60*24*365
+    return {
+        'before': before,
+        'after': 60*60*24*365
+    }
 
-
+@app.route('/debug/resume')
+def resume():
+    before = cm.interval
+    cm.interval = 60
+    return {
+        'before': before,
+        'after': 60
+    }
