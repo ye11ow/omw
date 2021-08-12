@@ -84,15 +84,10 @@ export default function Map(props) {
         });
       }
     }
-
   }
 
-  let text = null;
   return (
     <div>
-      <div className="sidebar">
-        {text}
-      </div>
       <div id="map" className="map-container" style={{height: 800}} />
     </div>
   );

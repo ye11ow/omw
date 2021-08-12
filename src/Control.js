@@ -37,23 +37,21 @@ class Control extends React.Component {
 
     const nextUpdate = Math.round(this.props.nextUpdate - Date.now() / 1000);
     return (
-      <div className="row">
-        <div className="col-sm-12">
-          <div className="card info-card">
-            <div className="card-body">
-              <h5 className="card-title">Your location: {this.props.target.place_name}</h5>
+      <div className="info-card shadow">
+            <div className="info-body">
+              {/* <h5 className="card-title">Your location: {this.props.target.place_name}</h5> */}
               {this.props.route && (
                 <div className="label">
                   <span>ye11ow</span> is{" "}
-                  <mark className="fw-bold">
+                  <span className="fw-bold">
                     {Math.round(this.props.route.duration / 60)}
-                  </mark>{" "}
-                  minutes ({Math.round(this.props.route.distance / 1000)} KM) away
-                </div>
-              )}
-              {"Notification" in window && this.props.notification && (
-                <div className="label">
-                  You will be notified when ye11ow is <mark className="fw-bold">{this.props.notification}</mark> minutes away
+                  </span>{" "}
+                  minutes ({Math.round(this.props.route.distance / 1000)} KM) away.
+                  {"Notification" in window && this.props.notification && (
+                    <span>
+                      &nbsp;You will be notified when ye11ow is <span className="fw-bold">{this.props.notification}</span> minutes away
+                    </span>
+                  )}
                 </div>
               )}
               {"Notification" in window && Notification.permission !== "granted" &&
@@ -67,14 +65,12 @@ class Control extends React.Component {
                 </div>
               }
             </div>
-            <div className="card-footer text-muted">
+            <div className="text-white-50 float-end">
               {nextUpdate > 0
-                ? <span className="text-muted">next update in {nextUpdate}s</span>
-                : <span className="text-muted">updating...</span>
+                ? <span>next update in {nextUpdate}s</span>
+                : <span>updating...</span>
               }
             </div>
-          </div>
-        </div>
       </div>
     );
   }
