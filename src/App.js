@@ -11,6 +11,7 @@ class App extends React.Component {
     notification: 5,
     lastUpdate: null,
     nextUpdate: null,
+    error: null
   };
 
   componentDidMount() {
@@ -44,7 +45,13 @@ class App extends React.Component {
     console.log("querying address: " + addr);
 
     fetch(this._buildAddrURI(addr))
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        }
+
+        return response.json()
+      })
       .then((data) => {
         if (data.features.length > 0) {
           const target = data.features[0];
@@ -52,6 +59,7 @@ class App extends React.Component {
 
           this.setState({
             target: target,
+            error: null
           });
         } else {
           alert(`Address ${addr} not found`);
@@ -59,6 +67,10 @@ class App extends React.Component {
       })
       .catch((error) => {
         console.error("Error:", error);
+
+        this.setState({
+          error: "Server offline. Please Wechat ye11ow."
+        });
       });
   }
 
@@ -72,7 +84,13 @@ class App extends React.Component {
     }
 
     this._updatingVehicle = fetch("/tesla")
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        }
+
+        return response.json()
+      })
       .then((data) => {
         this.setState({
           driver: {
@@ -81,6 +99,7 @@ class App extends React.Component {
             heading: data.vehicle.heading,
           },
           nextUpdate: data.next_refresh,
+          error: null
         });
         console.log(
           "scheduled next run to be",
@@ -91,6 +110,10 @@ class App extends React.Component {
       })
       .catch((error) => {
         console.error("Error:", error);
+
+        this.setState({
+          error: "Server offline. Please Wechat ye11ow."
+        });
       })
       .finally(() => (this._updatingVehicle = null));
   }
@@ -107,7 +130,13 @@ class App extends React.Component {
     this._refreshingRoute = fetch(
       this._buildDirectionURI(this.state.driver, this.state.target)
     )
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        }
+
+        return response.json()
+      })
       .then((data) => {
         let route = null;
         if (data.routes.length > 0) {
@@ -129,10 +158,15 @@ class App extends React.Component {
         this.setState({
           route: route,
           lastUpdate: Date.now(),
+          error: null
         });
       })
       .catch((error) => {
         console.error("Error:", error);
+
+        this.setState({
+          error: "Server offline. Please Wechat ye11ow."
+        });
       })
       .finally(() => (this._refreshingRoute = null));
   }
@@ -147,6 +181,7 @@ class App extends React.Component {
           lastUpdate={this.state.lastUpdate}
           nextUpdate={this.state.nextUpdate}
           notification={this.state.notification}
+          error={this.state.error}
         />
         <Map
           driver={this.state.driver}

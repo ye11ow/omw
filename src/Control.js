@@ -63,6 +63,11 @@ class Control extends React.Component {
               Notification is not supported on your device.
             </div>
           )}
+          {this.props.error && (
+             <div className="text-danger">
+              {this.props.error}
+           </div>
+          )}
         </div>
         <div className="text-white-50 float-end">
           {nextUpdate > 0 ? (
