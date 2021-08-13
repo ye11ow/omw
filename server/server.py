@@ -18,18 +18,19 @@ MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
 class CacheManager:
 
     def __init__(self):
-        self._interval = 60
+        self.interval = 60
         self._last_refreshed = None
+        self._addr = {}
 
-    def get(self):
+    def get_tesla(self):
         if self.expire():
             print("cache expired, refreshing")
-            self._load()
+            self._get_telsa()
         else:
             print("load cached data")
 
         return {
-            "next_refresh": self._last_refreshed + self._interval,
+            "next_refresh": self._last_refreshed + self.interval,
             "vehicle": self._data['drive_state']
         }
 
@@ -37,12 +38,31 @@ class CacheManager:
         if self._last_refreshed is None:
             return True
 
-        if self._last_refreshed + self._interval < int(time.time()):
+        if self._last_refreshed + self.interval < int(time.time()):
             return True
 
         return False
 
-    def _load(self):
+    def get_addr(self, addr):
+        if addr in self._addr:
+            print('return addr from cache')
+            return self._addr[addr]
+
+        print('querying addr from Mapbox')
+
+        params = {
+            'access_token': MAPBOX_TOKEN,
+            'autocomplete': 'true',
+            'country': 'ca'
+        }
+
+        r = requests.get(f'{API_ADDRESS}{urllib.parse.quote(addr)}.json', params = params)
+        self._addr[addr] = r.json()
+
+        return self._addr[addr]
+
+
+    def _get_telsa(self):
         if os.getenv('TESLA_DEBUG'):
             print('debug mode on, loading from fixture')
             with open('tests/fixtures/response.json') as f:
@@ -88,7 +108,7 @@ def send_js(path):
 
 @app.route("/tesla")
 def tesla():
-    return cm.get()
+    return cm.get_tesla()
 
 @app.route('/address')
 def address():
@@ -96,15 +116,7 @@ def address():
 
     print('querying', addr)
 
-    params = {
-        'access_token': MAPBOX_TOKEN,
-        'autocomplete': 'true',
-        'country': 'ca'
-    }
-
-    r = requests.get(f'{API_ADDRESS}{urllib.parse.quote(addr)}.json', params = params)
-
-    return r.json()
+    return cm.get_addr(addr)
 
 @app.route('/route')
 def route():
