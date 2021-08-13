@@ -19,16 +19,15 @@ export default function Map(props) {
       zoom: 12,
     });
 
-    const el = document.createElement('div');
+    const el = document.createElement("div");
 
-    el.style.backgroundImage = 'url(resources/car.png)';
+    el.style.backgroundImage = "url(resources/car.png)";
     el.className = "marker";
     // el.style.transform = `rotate(80deg);`
 
     marker.current = new mapboxgl.Marker(el)
       .setLngLat([-123.1207, 49.2827])
       .addTo(map.current);
-
   });
 
   if (map.current) {
@@ -43,52 +42,46 @@ export default function Map(props) {
     }
 
     if (props.target) {
-      new mapboxgl.Marker()
-      .setLngLat(props.target.center)
-      .addTo(map.current);
+      new mapboxgl.Marker().setLngLat(props.target.center).addTo(map.current);
     }
 
     if (props.driver && props.target) {
-      const midLng = (props.driver.lng + props.target.center[0]) / 2
-      const midLat = (props.driver.lat + props.target.center[1]) / 2
+      const midLng = (props.driver.lng + props.target.center[0]) / 2;
+      const midLat = (props.driver.lat + props.target.center[1]) / 2;
 
-      map.current.setCenter([midLng, midLat])
+      map.current.setCenter([midLng, midLat]);
     }
 
     if (props.route) {
       const geojson = {
-        type: 'Feature',
+        type: "Feature",
         properties: {},
-        geometry: props.route.geometry
-      }
+        geometry: props.route.geometry,
+      };
 
-      if (map.current.getSource('route')) {
-        map.current.getSource('route').setData(geojson);
+      if (map.current.getSource("route")) {
+        map.current.getSource("route").setData(geojson);
       } else {
         map.current.addLayer({
-          id: 'route',
-          type: 'line',
+          id: "route",
+          type: "line",
           source: {
-            type: 'geojson',
-            data: geojson
+            type: "geojson",
+            data: geojson,
           },
           layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
+            "line-join": "round",
+            "line-cap": "round",
           },
           paint: {
-            'line-color': '#3887be',
-            'line-width': 5,
-            'line-opacity': 0.75
-          }
+            "line-color": "#3887be",
+            "line-width": 5,
+            "line-opacity": 0.75,
+          },
         });
       }
     }
   }
 
-  return (
-    <div>
-      <div id="map" className="map-container" style={{height: 800}} />
-    </div>
-  );
+  return <div id="map" className="map-container" />;
 }
