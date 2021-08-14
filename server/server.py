@@ -9,6 +9,12 @@ import requests
 
 from flask import Flask, send_from_directory, request
 
+LOG_FORMAT = '%(asctime)s %(levelname)s %(module)s(%(lineno)d) - %(message)s'
+DATE_FORMAT = '%m/%d %H:%M:%S'
+logging.basicConfig(format=LOG_FORMAT, datefmt=DATE_FORMAT, level=logging.INFO)
+logger = logging.getLogger('omw')
+logger.setLevel(logging.DEBUG)
+
 API_BASE = 'https://api.mapbox.com/'
 API_ADDRESS = f'{API_BASE}geocoding/v5/mapbox.places/'
 API_DIRECTION = f'{API_BASE}directions/v5/mapbox/driving/'
@@ -24,10 +30,10 @@ class CacheManager:
 
     def get_tesla(self):
         if self.expire():
-            print("cache expired, refreshing")
+            logger.debug("tesla cache expired, refreshing")
             self._get_telsa()
-        else:
-            print("load cached data")
+
+        logger.info("querying tesla data")
 
         return {
             "next_refresh": self._last_refreshed + self.interval,
@@ -44,43 +50,42 @@ class CacheManager:
         return False
 
     def get_addr(self, addr):
-        if addr in self._addr:
-            print('return addr from cache')
+        if not addr in self._addr:
+            logger.debug('address is not cached, loading from Mapbox')
+            params = {
+                'access_token': MAPBOX_TOKEN,
+                'autocomplete': 'true',
+                'country': 'ca'
+            }
+
+            r = requests.get(f'{API_ADDRESS}{urllib.parse.quote(addr)}.json', params = params)
+            self._addr[addr] = r.json()
+
             return self._addr[addr]
 
-        print('querying addr from Mapbox')
-
-        params = {
-            'access_token': MAPBOX_TOKEN,
-            'autocomplete': 'true',
-            'country': 'ca'
-        }
-
-        r = requests.get(f'{API_ADDRESS}{urllib.parse.quote(addr)}.json', params = params)
-        self._addr[addr] = r.json()
+        logger.info(f'querying address {addr}')
 
         return self._addr[addr]
 
 
     def _get_telsa(self):
         if os.getenv('TESLA_DEBUG'):
-            print('debug mode on, loading from fixture')
+            logger.info('debug mode on, loading from fixture')
             with open('tests/fixtures/response.json') as f:
                 self._data = json.load(f)
                 self._data['drive_state']['latitude'] += random.random() / 100
                 self._data['drive_state']['longitude'] += random.random() / 100
-                print('cache data loaded')
+                logger.info('cache data loaded')
         else:
-            print('debug mode off, loading from API')
             with teslapy.Tesla(os.getenv('TESLA_EMAIL'), os.getenv('TESLA_PASSWORD')) as tesla:
                 tesla.fetch_token()
                 vehicles = tesla.vehicle_list()
-                if len(vehicles) == 0:
-                    print('no vehicle found')
+                if len(vehicles) != 1:
+                    logger.error(f'unexpected number of vehicle found ({len(vehicles)})')
                     exit(1)
 
                 v = vehicles[0]
-                v.sync_wake_up()
+                # v.sync_wake_up()
 
                 self._data = v.get_vehicle_data()
 
@@ -114,15 +119,13 @@ def tesla():
 def address():
     addr = request.args.get('address', '')
 
-    print('querying', addr)
-
     return cm.get_addr(addr)
 
 @app.route('/route')
 def route():
     coordinates = request.args.get('coordinates', '')
 
-    print('querying route for ', coordinates)
+    logger.info(f'querying route for {coordinates}')
 
     params = {
         'access_token': MAPBOX_TOKEN,
