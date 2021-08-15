@@ -27,6 +27,7 @@ class CacheManager:
         self.interval = 60
         self._last_refreshed = None
         self._addr = {}
+        self._vehicle = None
 
     def get_tesla(self):
         if self.expire():
@@ -77,17 +78,18 @@ class CacheManager:
                 self._data['drive_state']['longitude'] += random.random() / 100
                 logger.info('cache data loaded')
         else:
-            with teslapy.Tesla(os.getenv('TESLA_EMAIL'), os.getenv('TESLA_PASSWORD')) as tesla:
-                tesla.fetch_token()
-                vehicles = tesla.vehicle_list()
-                if len(vehicles) != 1:
-                    logger.error(f'unexpected number of vehicle found ({len(vehicles)})')
-                    exit(1)
+            if not self._vehicle:
+                with teslapy.Tesla(os.getenv('TESLA_EMAIL'), os.getenv('TESLA_PASSWORD')) as tesla:
+                    tesla.fetch_token()
+                    vehicles = tesla.vehicle_list()
+                    if len(vehicles) != 1:
+                        logger.error(f'unexpected number of vehicle found ({len(vehicles)})')
+                        exit(1)
 
-                v = vehicles[0]
-                # v.sync_wake_up()
+                    self._vehicle = vehicles[0]
 
-                self._data = v.get_vehicle_data()
+            # self._vehicle.sync_wake_up()
+            self._data = self._vehicle.get_vehicle_data()
 
         self._last_refreshed = int(time.time())
 

@@ -1,5 +1,26 @@
 # On My Way
 
+Imaging you want to pickeup your friends at their place at 11am for a hike, what would you do to keep them informed about your location? Most likely you will need to:
+
+1. Send out them a message when you leave your place so that they can roughly estimate your arrival time.
+2. Send out another message when you are close to their place.
+3. Send out a thrid message after your arrival
+
+On My Way is a self-hosted web application aiming to make it ealiser and safer. It allows you to share your realtime location in a map to the subscribers. The subscripbers can check the estimated time to their location via Web UI, receive notifications about your current status.
+
+
+## Supported cars/location services
+-  [X] Tesla
+- [ ] Google Map
+
+## Supported notification type:
+- [X] Browser notification (Not available on mobile devices)
+- [ ] IOS Push notification
+- [ ] Android Push notification
+- [ ] Text message
+
+# Development
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -46,32 +67,3 @@ TESLA_EMAIL=
 TESLA_PASSWORD=
 ```
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
