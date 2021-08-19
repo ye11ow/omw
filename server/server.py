@@ -28,6 +28,7 @@ class CacheManager:
         self._last_refreshed = None
         self._addr = {}
         self._vehicle = None
+        self._data = {}
 
     def get_tesla(self):
         if self.expire():
@@ -68,7 +69,6 @@ class CacheManager:
 
         return self._addr[addr]
 
-
     def _get_telsa(self):
         if os.getenv('TESLA_DEBUG'):
             logger.info('debug mode on, loading from fixture')
@@ -93,6 +93,14 @@ class CacheManager:
 
         self._last_refreshed = int(time.time())
 
+    def set(self, sess, location):
+        self._data[sess] = location
+
+    def get(self, sess):
+        if sess in self._data:
+            return self._data[sess]
+        return {}
+
     @property
     def interval(self):
         return self._interval
@@ -113,9 +121,21 @@ cm = CacheManager()
 def send_js(path):
     return send_from_directory('../build', path)
 
-@app.route("/tesla")
-def tesla():
-    return cm.get_tesla()
+@app.route("/location", methods=['GET', 'POST'])
+def location():
+    sess = request.args.get('session', '')
+    if not sess:
+        return {}
+
+    if request.method == 'POST':
+        data = request.get_json()
+        cm.set(sess, data)
+        return {}
+    else:
+        if sess == 'tesla':
+            return cm.get_tesla()
+        else:
+            return cm.get(sess)
 
 @app.route('/address')
 def address():

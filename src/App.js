@@ -23,6 +23,12 @@ class App extends React.Component {
       this.handleSubmitAddress(addr);
     }
 
+    let session = urlParams.get("session");
+    this._session = null;
+    if (session && session.length > 0) {
+      this._session = session;
+    }
+
     const noti = urlParams.get("notification");
     if (noti && parseInt(noti, 10) > 0) {
       this.state.notification = parseInt(noti, 10);
@@ -83,7 +89,8 @@ class App extends React.Component {
       return;
     }
 
-    this._updatingVehicle = fetch("/tesla")
+    const session = this._session ? this._session : 'tesla';
+    this._updatingVehicle = fetch(this._buildLocationURI(session))
       .then((response) => {
         if (!response.ok) {
           throw response;
@@ -199,6 +206,10 @@ class App extends React.Component {
 
   _buildAddrURI(addr) {
     return `address?address=${encodeURI(addr)}`;
+  }
+
+  _buildLocationURI(session) {
+    return `location?session=${encodeURI(session)}`;
   }
 }
 
