@@ -2,6 +2,7 @@ import Map from "./Map";
 import Control from "./Control";
 import "./App.css";
 import React from "react";
+import { buildLocationURI, getSession } from "./Utils"
 
 class App extends React.Component {
   state = {
@@ -23,11 +24,7 @@ class App extends React.Component {
       this.handleSubmitAddress(addr);
     }
 
-    let session = urlParams.get("session");
-    this._session = null;
-    if (session && session.length > 0) {
-      this._session = session;
-    }
+    this._session = getSession();
 
     const noti = urlParams.get("notification");
     if (noti && parseInt(noti, 10) > 0) {
@@ -89,8 +86,7 @@ class App extends React.Component {
       return;
     }
 
-    const session = this._session ? this._session : 'tesla';
-    this._updatingVehicle = fetch(this._buildLocationURI(session))
+    this._updatingVehicle = fetch(buildLocationURI(this._session))
       .then((response) => {
         if (!response.ok) {
           throw response;
@@ -206,10 +202,6 @@ class App extends React.Component {
 
   _buildAddrURI(addr) {
     return `address?address=${encodeURI(addr)}`;
-  }
-
-  _buildLocationURI(session) {
-    return `location?session=${encodeURI(session)}`;
   }
 }
 
