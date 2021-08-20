@@ -7,7 +7,7 @@ import teslapy
 import urllib.parse
 import requests
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, send_file, request
 
 LOG_FORMAT = '%(asctime)s %(levelname)s %(module)s(%(lineno)d) - %(message)s'
 DATE_FORMAT = '%m/%d %H:%M:%S'
@@ -120,6 +120,11 @@ cm = CacheManager()
 @app.route('/<path:path>')
 def send_js(path):
     return send_from_directory('../build', path)
+
+@app.route('/app')
+@app.route('/manager')
+def send_html():
+    return send_file('../build/index.html')
 
 @app.route("/location", methods=['GET', 'POST'])
 def location():
