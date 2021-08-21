@@ -17,6 +17,7 @@ class Manager extends React.Component {
     const that = this;
     navigator.geolocation.getCurrentPosition((position) => {
       const session = getSession();
+      const timestamp = Math.round(Date.now() / 1000);
 
       fetch(buildLocationURI(session), {
         method: "POST",
@@ -24,7 +25,8 @@ class Manager extends React.Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          next_refresh: Math.round(Date.now() / 1000) + UPDATE_INTERVAL,
+          timestamp: timestamp,
+          next_refresh: timestamp + UPDATE_INTERVAL,
           vehicle: {
             heading: 0,
             latitude: position.coords.latitude,
@@ -34,7 +36,7 @@ class Manager extends React.Component {
       }).finally(() => {
         that.setState((state) => ({
           history: [...state.history, {
-            timestamp: Date.now(),
+            timestamp: timestamp,
             heading: 0,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
@@ -56,7 +58,7 @@ class Manager extends React.Component {
             {this.state.history.map((h) => {
                 return (
                     <li key={h.timestamp}>
-                      <span className="text-info ">{new Date(h.timestamp).toISOString()}</span> ({h.latitude}, {h.longitude})</li>
+                      <span className="text-info ">{new Date(h.timestamp * 1000).toISOString()}</span> ({h.latitude}, {h.longitude})</li>
                 )
             })}
         </ul>

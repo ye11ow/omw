@@ -13,9 +13,9 @@ class Control extends React.Component {
 
   componentDidMount() {
     setInterval(() => {
-      if (this.props.nextUpdate) {
+      if (this.props.location) {
         this.setState({
-          nextUpdate: Math.round(this.props.nextUpdate - Date.now() / 1000),
+          nextUpdate: Math.round(this.props.location.next_refresh - Date.now() / 1000),
         });
       }
     });
@@ -30,7 +30,6 @@ class Control extends React.Component {
       return <div>No valid address</div>;
     }
 
-    const nextUpdate = Math.round(this.props.nextUpdate - Date.now() / 1000);
     return (
       <div className="info-card shadow">
         <div className="info-body">
@@ -70,14 +69,23 @@ class Control extends React.Component {
           )}
         </div>
         <div className="text-white-50 float-end">
-          {nextUpdate > 0 ? (
-            <span>next update in {nextUpdate}s</span>
+          {this.props.location && (
+            <span>updated at {this._formatTime(this.props.location.timestamp)}, </span>
+          )}
+          {this.state.nextUpdate > 0 ? (
+            <span>next update in {this.state.nextUpdate}s</span>
           ) : (
             <span>updating...</span>
           )}
         </div>
       </div>
     );
+  }
+
+  _formatTime(timestamp) {
+    const datetime = new Date(timestamp * 1000);
+
+    return `${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`;
   }
 }
 

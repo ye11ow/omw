@@ -8,10 +8,8 @@ class App extends React.Component {
   state = {
     target: null,
     route: null,
-    driver: null,
+    location: null,
     notification: 5,
-    lastUpdate: null,
-    nextUpdate: null,
     error: null
   };
 
@@ -37,7 +35,7 @@ class App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (
       prevState.address !== this.state.address ||
-      prevState.driver !== this.state.driver
+      prevState.location !== this.state.location
     ) {
       this.refreshRoute();
     }
@@ -82,7 +80,7 @@ class App extends React.Component {
       return;
     }
 
-    if (this.state.nextUpdate && this.state.nextUpdate > Date.now() / 1000) {
+    if (this.state.location && this.state.location.next_refresh > Date.now() / 1000) {
       return;
     }
 
@@ -96,12 +94,7 @@ class App extends React.Component {
       })
       .then((data) => {
         this.setState({
-          driver: {
-            lng: data.vehicle.longitude,
-            lat: data.vehicle.latitude,
-            heading: data.vehicle.heading,
-          },
-          nextUpdate: data.next_refresh,
+          location: data,
           error: null
         });
         console.log(
@@ -126,12 +119,12 @@ class App extends React.Component {
       return;
     }
 
-    if (!this.state.driver || !this.state.target) {
+    if (!this.state.location || !this.state.target) {
       return;
     }
 
     this._refreshingRoute = fetch(
-      this._buildDirectionURI(this.state.driver, this.state.target)
+      this._buildDirectionURI(this.state.location, this.state.target)
     )
       .then((response) => {
         if (!response.ok) {
@@ -160,7 +153,6 @@ class App extends React.Component {
 
         this.setState({
           route: route,
-          lastUpdate: Date.now(),
           error: null
         });
       })
@@ -181,13 +173,12 @@ class App extends React.Component {
           target={this.state.target}
           route={this.state.route}
           notify={this.state.notify}
-          lastUpdate={this.state.lastUpdate}
-          nextUpdate={this.state.nextUpdate}
+          location={this.state.location}
           notification={this.state.notification}
           error={this.state.error}
         />
         <Map
-          driver={this.state.driver}
+          location={this.state.location}
           target={this.state.target}
           route={this.state.route}
         />
@@ -195,8 +186,8 @@ class App extends React.Component {
     );
   }
 
-  _buildDirectionURI(driver, target) {
-    const coordinates = `${driver.lng},${driver.lat};${target.center[0]},${target.center[1]}`;
+  _buildDirectionURI(location, target) {
+    const coordinates = `${location.vehicle.longitude},${location.vehicle.latitude};${target.center[0]},${target.center[1]}`;
     return `route?coordinates=${encodeURI(coordinates)}`;
   }
 

@@ -10,7 +10,7 @@ On My Way is a self-hosted web application aiming to make it ealiser and safer. 
 
 
 ## Supported cars/location services
--  [X] Tesla
+- [X] Tesla
 - [ ] Google Map
 
 ## Supported notification type:
