@@ -3,6 +3,7 @@ import Control from "./Control";
 import "./App.css";
 import React from "react";
 import { buildLocationURI, getSession } from "./Utils"
+import { isEmpty } from "lodash/core";
 
 class App extends React.Component {
   state = {
@@ -93,6 +94,15 @@ class App extends React.Component {
         return response.json()
       })
       .then((data) => {
+        if (isEmpty(data)) {
+          this.setState({
+            location: null,
+            error: "Empty session. (is there anyone sending data?)"
+          });
+
+          return;
+        }
+
         this.setState({
           location: data,
           error: null
