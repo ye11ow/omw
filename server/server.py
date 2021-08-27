@@ -24,32 +24,8 @@ MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN')
 class CacheManager:
 
     def __init__(self):
-        self.interval = 60
-        self._last_refreshed = None
         self._addr = {}
-        self._vehicle = None
         self._data = {}
-
-    def get_tesla(self):
-        if self.expire():
-            logger.debug("tesla cache expired, refreshing")
-            self._get_telsa()
-
-        logger.info("querying tesla data")
-
-        return {
-            "next_refresh": self._last_refreshed + self.interval,
-            "vehicle": self._data['drive_state']
-        }
-
-    def expire(self):
-        if self._last_refreshed is None:
-            return True
-
-        if self._last_refreshed + self.interval < int(time.time()):
-            return True
-
-        return False
 
     def get_addr(self, addr):
         if not addr in self._addr:
@@ -68,30 +44,6 @@ class CacheManager:
         logger.info(f'querying address {addr}')
 
         return self._addr[addr]
-
-    def _get_telsa(self):
-        if os.getenv('TESLA_DEBUG'):
-            logger.info('debug mode on, loading from fixture')
-            with open('tests/fixtures/response.json') as f:
-                self._data = json.load(f)
-                self._data['drive_state']['latitude'] += random.random() / 100
-                self._data['drive_state']['longitude'] += random.random() / 100
-                logger.info('cache data loaded')
-        else:
-            if not self._vehicle:
-                with teslapy.Tesla(os.getenv('TESLA_EMAIL'), os.getenv('TESLA_PASSWORD')) as tesla:
-                    tesla.fetch_token()
-                    vehicles = tesla.vehicle_list()
-                    if len(vehicles) != 1:
-                        logger.error(f'unexpected number of vehicle found ({len(vehicles)})')
-                        exit(1)
-
-                    self._vehicle = vehicles[0]
-
-            # self._vehicle.sync_wake_up()
-            self._data = self._vehicle.get_vehicle_data()
-
-        self._last_refreshed = int(time.time())
 
     def set(self, sess, location):
         self._data[sess] = location
@@ -137,10 +89,7 @@ def location():
         cm.set(sess, data)
         return {}
     else:
-        if sess == 'tesla':
-            return cm.get_tesla()
-        else:
-            return cm.get(sess)
+        return cm.get(sess)
 
 @app.route('/address')
 def address():
@@ -163,21 +112,3 @@ def route():
     r = requests.get(f'{API_DIRECTION}{urllib.parse.quote(coordinates)}', params = params)
 
     return r.json()
-
-@app.route('/debug/pause')
-def pause():
-    before = cm.interval
-    cm.interval = 60*60*24*365
-    return {
-        'before': before,
-        'after': 60*60*24*365
-    }
-
-@app.route('/debug/resume')
-def resume():
-    before = cm.interval
-    cm.interval = 60
-    return {
-        'before': before,
-        'after': 60
-    }
