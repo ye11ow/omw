@@ -1,4 +1,5 @@
 import os
+import traceback
 import time
 import sys
 import json
@@ -16,10 +17,11 @@ logger = logging.getLogger('omw_tesla_sender')
 logger.setLevel(logging.DEBUG)
 
 SEND_INTERVAL = 10
-DURATION = 60
-HOST = 'https://localhost:5000'
+DURATION = 60 * 60 * 24
+HOST = 'http://localhost:5000'
 vehicle = None
 session = ''
+start_time = int(time.time())
 
 class MockTesla:
 
@@ -40,6 +42,11 @@ def setInterval(func, time):
         func()
 
 def send_data():
+    session_left = DURATION - (int(time.time()) - start_time)
+    logger.info(f'sending location data... Session time left: {session_left}s')
+    if session_left < 0:
+        exit(0)
+
     try:
         drive_state = vehicle.get_vehicle_data()['drive_state']
 
@@ -49,13 +56,15 @@ def send_data():
         }
 
         requests.post(f'{HOST}/location?session={session}', json=payload)
-    except:
+    except Exception as err:
+        logger.error('failed to send location data')
+        print(traceback.format_exc())
         return
 
 if __name__ == '__main__':
-
-    print(sys.argv)
     session = sys.argv[1]
+
+    logger.info(f'sending location to {HOST} with interval {SEND_INTERVAL}s. Session duration {int(DURATION / 60)} minutes')
 
     if os.getenv('TESLA_DEBUG'):
         logger.info('debug mode on, loading from fixture')

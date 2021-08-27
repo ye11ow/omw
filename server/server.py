@@ -1,9 +1,5 @@
-import time
 import logging
-import random
-import json
 import os
-import teslapy
 import urllib.parse
 import requests
 
