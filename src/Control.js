@@ -26,6 +26,16 @@ class Control extends React.Component {
   }
 
   render() {
+    let updating = null;
+    if (!this.props.error) {
+      if (this.state.nextUpdate > 0) {
+        updating = (<span>next update in {this.state.nextUpdate}s</span>);
+      } else {
+        updating = (<span>updating...</span>)
+      }
+    }
+
+
     if (!this.props.target) {
       return <div>No valid address</div>;
     }
@@ -72,11 +82,7 @@ class Control extends React.Component {
           {this.props.location && (
             <span>updated at {this._formatTime(this.props.location.timestamp)}, </span>
           )}
-          {this.state.nextUpdate > 0 ? (
-            <span>next update in {this.state.nextUpdate}s</span>
-          ) : (
-            <span>updating...</span>
-          )}
+          {updating}
         </div>
       </div>
     );

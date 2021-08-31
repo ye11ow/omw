@@ -49,10 +49,12 @@ def send_data():
 
     try:
         drive_state = vehicle.get_vehicle_data()['drive_state']
+        now = int(time.time())
 
         payload = {
-            'next_refresh': int(time.time()) + SEND_INTERVAL,
-            'vehicle': drive_state
+            'next_refresh': now + SEND_INTERVAL,
+            'vehicle': drive_state,
+            'timestamp': now
         }
 
         requests.post(f'{HOST}/location?session={session}', json=payload)
