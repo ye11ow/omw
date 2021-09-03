@@ -1,12 +1,11 @@
-import os
 import traceback
 import time
-import sys
 import json
 import random
 import logging
 import threading
 
+import click
 import requests
 import teslapy
 
@@ -16,11 +15,6 @@ logging.basicConfig(format=LOG_FORMAT, datefmt=DATE_FORMAT, level=logging.INFO)
 logger = logging.getLogger('omw_tesla_sender')
 logger.setLevel(logging.DEBUG)
 
-SEND_INTERVAL = 10
-DURATION = 60 * 60 * 24
-HOST = 'http://localhost:5000'
-vehicle = None
-session = ''
 start_time = int(time.time())
 
 class MockTesla:
@@ -36,13 +30,8 @@ class MockTesla:
         logger.debug('getting vehicle data')
         return self._data
 
-def setInterval(func, time):
-    e = threading.Event()
-    while not e.wait(time):
-        func()
-
-def send_data():
-    session_left = DURATION - (int(time.time()) - start_time)
+def send_data(session, interval, duration, host, vehicle):
+    session_left = duration - (int(time.time()) - start_time)
     logger.info(f'sending location data... Session time left: {session_left}s')
     if session_left < 0:
         exit(0)
@@ -52,28 +41,35 @@ def send_data():
         now = int(time.time())
 
         payload = {
-            'next_refresh': now + SEND_INTERVAL,
+            'next_refresh': now + interval,
             'vehicle': drive_state,
             'timestamp': now
         }
 
-        requests.post(f'{HOST}/location?session={session}', json=payload)
+        requests.post(f'{host}/location?session={session}', json=payload)
     except Exception as err:
         logger.error('failed to send location data')
         print(traceback.format_exc())
         return
 
-if __name__ == '__main__':
-    session = sys.argv[1]
 
-    logger.info(f'sending location to {HOST} with interval {SEND_INTERVAL}s. Session duration {int(DURATION / 60)} minutes')
+@click.command()
+@click.option('--email', '-e', help='the email address of your Tesla account', envvar='TESLA_EMAIL')
+@click.option('--password', '-p', help='the password of your Tesla account', envvar='TESLA_PASSWORD')
+@click.option('--session', '-s', help='name of the session', required=True)
+@click.option('--interval', '-i', help='sending interval in seconds', default=10)
+@click.option('--duration', '-d', help='total session duration in minutes', default=60 * 60 * 24)
+@click.option('--host', '-h', default='http://localhost:5000')
+@click.option('--debug', is_flag=True, default=False)
+def tesla(email, password, session, interval, duration, host, debug):
+    logger.info(f'sending location to {host} with interval {interval}s. Session duration {int(duration / 60)} minutes')
 
-    if os.getenv('TESLA_DEBUG'):
+    if debug:
         logger.info('debug mode on, loading from fixture')
         vehicle = MockTesla()
     else:
         logger.info('connecting to Tesla server...')
-        with teslapy.Tesla(os.getenv('TESLA_EMAIL'), os.getenv('TESLA_PASSWORD')) as tesla:
+        with teslapy.Tesla(email, password) as tesla:
             tesla.fetch_token()
             vehicles = tesla.vehicle_list()
             if len(vehicles) != 1:
@@ -82,5 +78,9 @@ if __name__ == '__main__':
 
             vehicle = vehicles[0]
 
+    e = threading.Event()
+    while not e.wait(interval):
+        send_data(session, interval, duration, host, vehicle)
 
-    setInterval(send_data, SEND_INTERVAL)
+if __name__ == '__main__':
+    tesla()
